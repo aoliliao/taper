@@ -9,25 +9,25 @@ def args_parser():
 
     parser.add_argument('-dev', "--device", type=str, default="cuda", )
     parser.add_argument('-did', "--device_id", type=str, default="0")
-    parser.add_argument('-data', "--dataset", type=str, default="domainnet")
-    parser.add_argument('-nb', "--num_classes", type=int, default=345)
+    parser.add_argument('-data', "--dataset", type=str, default="cifar100")
+    parser.add_argument('-nb', "--num_classes", type=int, default=10)
 
     parser.add_argument('-m', "--model", type=str, default="resnet")
     # parser.add_argument('-p', "--head", type=str, default="cnn")
 
-    parser.add_argument('-lbs', "--batch_size", type=int, default=128)
+    parser.add_argument('-lbs', "--batch_size", type=int, default=50)
     parser.add_argument('-lr', "--local_learning_rate", type=float, default=0.01,
                         help="Local learning rate")
-    parser.add_argument('-gr', "--global_rounds", type=int, default=125)
-    parser.add_argument('-ls', "--local_steps", type=int, default=20)
-    parser.add_argument('-algo', "--algorithm", type=str, default="TAPER")
-    parser.add_argument('-stage', "--stage", type=str, default="TAPER-1")
+    parser.add_argument('-gr', "--global_rounds", type=int, default=100)
+    parser.add_argument('-ls', "--local_steps", type=int, default=25)
+    parser.add_argument('-algo', "--algorithm", type=str, default="server_cifar")
+    parser.add_argument('-stage', "--stage", type=str, default="cifar-2")
     parser.add_argument('-per_node', "--per_node", type=int, default=5,
                         help="number of node for each domain")
     parser.add_argument('--seed', type=int, default=42, help='random seed')
     parser.add_argument('-mom', "--momentum", type=float, default=0.9, help="momentum")
     parser.add_argument('-wed', "--weight_decay", type=float, default=0.0001, help="weight_decay")
-
+    parser.add_argument('-nc', "--num_clients", type=int, default=300, help="Total number of clients")
 
     # not used
     parser.add_argument('-go', "--goal", type=str, default="test",
@@ -36,8 +36,7 @@ def args_parser():
                         help="Ratio of clients per round")
     parser.add_argument('-rjr', "--random_join_ratio", type=bool, default=False,
                         help="Random ratio of clients per round")
-    parser.add_argument('-nc', "--num_clients", type=int, default=4,
-                        help="Total number of clients")
+
     parser.add_argument('-pv', "--prev", type=int, default=0,
                         help="Previous Running times")
     parser.add_argument('-t', "--times", type=int, default=1,

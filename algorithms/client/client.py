@@ -44,9 +44,9 @@ class Client(object):
         self.data_name = None
         self.train_loader = None
         self.test_loader = None
-        self.save_folder_name = './save/all_domainnet'
+        # self.save_folder_name = './save/all_domainnet'
         # self.save_folder_name = './save/resnet18-base'
-
+        self.save_folder_name = './save/cifar'
 
     def load_train_data(self, batch_size=None):
         if batch_size == None:

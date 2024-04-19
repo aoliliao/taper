@@ -34,6 +34,38 @@ class MLP(nn.Module):
         return output
 
 
+class ConvNet(nn.Module):
+    def __init__(self, ws=[16, 32]):
+        super(ConvNet, self).__init__()
+        self.conv1 = nn.Conv2d(3, ws[0], kernel_size=3, stride=2, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(ws[0], ws[1], kernel_size=3, stride=1, padding=1, bias=False)
+        self.gap = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(ws[1], 10)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = self.gap(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x
+
+class ConvNet_100(nn.Module):
+    def __init__(self, ws=[16, 32]):
+        super(ConvNet_100, self).__init__()
+        self.conv1 = nn.Conv2d(3, ws[0], kernel_size=3, stride=2, padding=1, bias=False)
+        self.conv2 = nn.Conv2d(ws[0], ws[1], kernel_size=3, stride=1, padding=1, bias=False)
+        self.gap = nn.AdaptiveAvgPool2d((1, 1))
+        self.fc = nn.Linear(ws[1], 100)
+
+    def forward(self, x):
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = self.gap(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x
+
 class fastText(nn.Module):
     def __init__(self, hidden_dim, padding_idx=0, vocab_size=98635, num_classes=10):
         super(fastText, self).__init__()

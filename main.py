@@ -11,7 +11,10 @@ import logging
 from torch import nn
 
 from algorithms.server.serverTAPER import TAPER
-from models.model import LocalModel
+from algorithms.server.servercifar import servercifar
+from algorithms.server.serverdit import DiT_gen_param
+from models.MLP import ConvNet_100, ConvNet
+from models.model import LocalModel, LocalModel_reparam
 from options import args_parser
 from util.result_util import set_fixed_seed
 from models.ResNet import resnet18, resnet18_reparam
@@ -39,11 +42,14 @@ def run(args):
         # feature_dim = list(args.model.fc.parameters())[0].shape[1]
         # args.model.fc = nn.Linear(feature_dim, args.num_classes).to(args.device)
 
-        if args.stage == "TAPER-3":
+        if args.algorithm == "TAPER" and args.stage == "TAPER-3" :
             args.model = resnet18_reparam(num_classes=args.num_classes).to(args.device)
-        else:
+        elif args.algorithm == "TAPER" and args.stage == "TAPER-2" or args.stage == "TAPER-1":
             args.model = resnet18(num_classes=args.num_classes).to(args.device)
-
+        elif args.algorithm == "server_cifar" and args.stage == "cifar-1":
+            args.model = ConvNet_100().to(args.device)
+        elif args.algorithm == "server_cifar" and args.stage == "cifar-2":
+            args.model = ConvNet().to(args.device)
         # print(args.model)
 
         # select algorithm
@@ -54,16 +60,28 @@ def run(args):
             args.model = LocalModel(args.model, args.head)
             print(args.model)
             server = TAPER(args, i)
+        elif args.algorithm == "DiT":
+            args.head = copy.deepcopy(args.model.fc)
+            # args.head = nn.Identity()
+            args.model.fc = nn.Identity()
+            args.model = LocalModel_reparam(args.model, args.head)
+            print(args.model)
+            server = DiT_gen_param(args, i)
+        elif args.algorithm == "server_cifar":
+            print(args.model)
+            server = servercifar(args, i)
 
         else:
             raise NotImplementedError
 
         if args.stage == "TAPER-3":
             server.train_stage_three()
-        elif args.stage == "TAPER-2":
+        elif args.stage == "TAPER-2" or args.stage == "cifar-2":
             server.train_stage_two()
-        elif args.stage == "TAPER-1":
+        elif args.stage == "TAPER-1" or args.stage == "cifar-1":
             server.train_stage_one()
+        elif args.stage == "DiT-1":
+            server.train_dit()
         # server.test_baseline()
 
         time_list.append(time.time() - start)

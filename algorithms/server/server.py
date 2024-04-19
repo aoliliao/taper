@@ -36,8 +36,9 @@ class Server(object):
         self.goal = args.goal
         self.time_threthold = args.time_threthold
         self.top_cnt = 100
-        self.save_folder_name = './save/all_domainnet'
+        # self.save_folder_name = './save/all_domainnet'
         # self.save_folder_name = './save/resnet18-base'
+        self.save_folder_name = './save/cifar'
         self.clients = []
         self.selected_clients = []
         # self.train_slow_clients = []
